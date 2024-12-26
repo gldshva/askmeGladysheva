@@ -1,0 +1,16 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block content %}
+      <div class="d-flex gap-3 align-items-center">
+        <h1>One question</h1>
+        <a href="{% url 'index' %}">Main page</a>
+      </div>
+        <div class="col-8">
+            {% include 'layouts/question.html' with question=item %}
+          {% for answer in answers %}
+                {% include 'layouts/answers.html' %}
+          {% endfor %}
+
+        </div>
+{% endblock %}

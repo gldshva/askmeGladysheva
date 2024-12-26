@@ -1,0 +1,33 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="d-flex gap-3 align-items-center">
+        <h1>New Question</h1>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-8">
+          <form action="#">
+              <div class="form-floating mb-3">
+                <textarea class="form-control" maxlength="50" placeholder="Leave a title here" id="floatingTextarea2" style="height: 50px"></textarea>
+                <label for="floatingTextarea2">Title</label>
+              </div>
+              <div class="form-floating mb-3">
+                <textarea class="form-control" maxlength="400" placeholder="Leave a text here" id="floatingTextarea2" style="height: 300px"></textarea>
+                <label for="floatingTextarea2">Text</label>
+              </div>
+              <div class="form-floating is-invalid">
+                <input type="text" class="form-control is-invalid" id="floatingInputGroup2" placeholder="Tags" required>
+                <label for="floatingInputGroup2">Tags</label>
+              </div>
+              <div class="invalid-feedback">
+                Please enter 3 tags.
+              </div>
+              <button type="submit" class="btn btn-outline-success mt-3">Ask</button>
+            </form>
+            <form action="#">
+        </div>
+
+
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "./layouts/base.html" %}
+{% load static %}
+
+    {% block content %}
+    <h4> Tag: {{ tag_name }}</h4>
+            {% for question in questions %}
+                {% include 'layouts/question.html' %}
+            {% endfor %}
+    <footer>
+    </footer>
+    {% endblock %}

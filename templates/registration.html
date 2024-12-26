@@ -1,0 +1,45 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="d-flex gap-3 align-items-center">
+        <h1>Registration</h1>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-7">
+          <form action="#"></form>
+            <div class="d-flex flex-column gap-3 mb-3">
+            <div class="error text">
+                <p></p>
+            </div>
+            <div class="form-floating">
+                <input type="text" class="form-control" placeholder="Login">
+                <label for="floatingInput">Login</label>
+            </div>
+              <div class="form-floating">
+                <input type="email" class="form-control" id="floatingInputValue" placeholder="name@example.com">
+                <label for="floatingInputValue">Email</label>
+              </div>
+              <div class="form-floating">
+                <input type="text" class="form-control" id="floatingInput" placeholder="NickName">
+                <label for="floatingInput">NickName</label>
+              </div>
+              <div class="form-floating">
+                <input type="password" class="form-control" placeholder="Password">
+                <label for="floatingPassword">Password</label>
+              </div>
+              <div class="form-floating">
+                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                <label for="floatingPassword">Repeat password</label>
+              </div>
+              <div>
+                <label for="formFile" class="form-label">Upload avatar</label>
+                <input class="form-control" type="file" id="formFile">
+              </div>
+            </div>
+            <button type="button" class="btn btn-outline-success">Register!</button>
+
+        </div>
+
+{% endblock %}

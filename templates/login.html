@@ -1,0 +1,29 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block content %}
+
+      <div class="d-flex gap-3 align-items-center">
+        <h1>Log In</h1>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-7">
+          <form action="#">
+            <div class="error text">
+                <p></p>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="floatingInput" placeholder="Login">
+                <label for="floatingInput">Login</label>
+              </div>
+              <div class="form-floating mb-5">
+                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                <label for="floatingPassword">Password</label>
+              </div>
+              <button type="button" class="btn btn-outline-success">Log in!</button>
+              <div class="mt-4">
+                <a href="#">create new account</a>
+              </div>
+            </form>
+        </div>
+{% endblock %}
