@@ -1,11 +1,15 @@
 {% extends "./layouts/base.html" %}
 {% load static %}
 
-    {% block content %}
-    <h4> Tag: {{ tag_name }}</h4>
-            {% for question in questions %}
-                {% include 'layouts/question.html' %}
-            {% endfor %}
-    <footer>
-    </footer>
-    {% endblock %}
+{% block content %}
+    <div class="d-flex gap-3">
+        <h1>Tag: </h1>
+        <h1><a href="#" style="font-size: 24px;">{{ tag_name }}</a></h1>
+    </div>
+    <div class="col-8">
+        {% for question in questions %}
+        {% include 'layouts/question.html' %}
+        {% endfor %}
+        {% include 'layouts/pagination.html' %}
+    </div>
+{% endblock %}

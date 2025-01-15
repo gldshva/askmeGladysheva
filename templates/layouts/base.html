@@ -56,16 +56,14 @@
 
           <div class="col-4">
           <section class="mb-3">
-            <h2>Popular tags</h2>
-            <ul class="list-group overflow-auto" style="height: 350px;">
-                        {% for tag in tags %}
-                        <li class="list-group-item">
-                            <a href="{% url 'tag' tag.id %}">
-                                {{ tag.name }}
-                            </a>
-                        </li>
-                        {% endfor %}
-                    </ul>
+            <h2>Popular Tags</h2>
+                <div>
+                    {% for tag in tags %}
+                        <a href="{% url 'tag' tag_name=tag %}" class="badge text-bg-secondary">
+                           {{ tag }}
+                        </a>
+                    {% endfor %}
+                </div>
           </section>
           <section>
             <h2>Best members</h2>

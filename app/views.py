@@ -8,7 +8,8 @@ QUESTIONS = [
   {
     'title': 'title '  + str(i+1),
     'id': i,
-    'text': 'text' + str(i+1)
+    'text': 'text' + str(i+1),
+    'tags': ["tag_" + str(i % 4), "blabla"]
   } for i in range(30)
 ]
 
@@ -20,19 +21,14 @@ ANSWERS = [
   } for i in range(5)
 ]
 
-TAGS = [
-  {
-    'name': 'la' * i,
-    'id': i
-  } for i in range(5)
-]
+TAGS = ["tag_0", "tag_1", "tag_2", "tag_3", "blabla"]
 
 def index(request):
     page_num = int(request.GET.get('page', 1))
     paginator = Paginator(QUESTIONS, 5)
     page = paginator.page(page_num)
     return render(request, 'index.html',
-                  context={'questions': page.object_list, 'page_obj': page})
+                  context={'questions': page.object_list, 'page_obj': page, 'tags': TAGS})
 
 
 def hot(request):
@@ -42,36 +38,40 @@ def hot(request):
     paginator = Paginator(hot_questions, 5)
     page = paginator.page(page_num)
     return render(request, 'hot.html',
-                context={'questions': page.object_list, 'page_obj': page})
+                context={'questions': page.object_list, 'page_obj': page, 'tags': TAGS})
 
 
 def question(request, question_id):
     one_question = QUESTIONS[question_id]
-    answer = ANSWERS
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(ANSWERS, 3)
+    page = paginator.page(page_num)
     return render(request, 'one_question.html',
-                {'item': one_question, 'answers': answer})
+                {'item': one_question, 'tags': TAGS, 'answers': page.object_list, 'page_obj': page})
 
 
 def login(request):
-    return render(request, "login.html")
+    return render(request, "login.html", {'tags': TAGS})
 
 
 def registration(request):
-    return render(request, "registration.html")
+    return render(request, "registration.html", {'tags': TAGS})
 
 
 def settings(request):
-    return render(request, "settings.html")
+    return render(request, "settings.html", {'tags': TAGS})
 
 
 def ask(request):
-    return render(request, "ask.html")
+    return render(request, "ask.html", {'tags': TAGS})
 
 
 def tag(request, tag_name):
-    tag = copy.deepcopy(TAGS)
-    return render(request, "tag.html", {'tags': tag, 'tag_name': tag_name})
-
+    tag_questions = [question for question in QUESTIONS if tag_name in question['tags']]
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(tag_questions, 5)
+    page = paginator.page(page_num)
+    return render(request, 'tag.html', {'questions': page.object_list, 'page_obj': page, 'tag_name': tag_name, 'tags': TAGS})
 
 def paginate(objects_list, request, per_page=10):
     paginator = Paginator(objects_list, 5)
