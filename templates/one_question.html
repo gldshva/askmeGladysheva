@@ -7,7 +7,8 @@
         <a href="{% url 'index' %}">Main page</a>
       </div>
         <div class="col-8">
-            {% include 'layouts/question.html' with question=item %}
+            {% include 'layouts/question.html' with question=question %}
+
           {% for answer in answers %}
                 {% include 'layouts/answers.html' %}
           {% endfor %}

@@ -18,13 +18,14 @@
                         </h5>
                       <p class="card-text"> {{ question.text }}</p>
                       <div class="d-flex gap-5">
-                        <a href="#" class="card-link">Answer</a>
+                        <a href="{% url 'one_question' question.id %}" class="card-link">Answer</a>
                         <div class="d-flex">
                           Tags: <span style="margin-right: 5px;"></span>
-                          <a href="#" class="card-link">link</a>
-                          <a href="#" class="card-link">link</a>
-                          <a href="#" class="card-link">link</a>
-                          <a href="#" class="card-link">link</a>
+                            {% for tag in question.tags.all %}
+                             <span class="h6  ms-3">
+                                    <a href="{% url 'tag' tag %}">{{ tag.name }}</a>
+                             </span>
+                            {% endfor %}
                         </div>
                       </div>
                     </div>

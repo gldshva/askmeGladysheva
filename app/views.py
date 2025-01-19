@@ -1,53 +1,34 @@
 import copy
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponse
+from app.models import Question, Answer, Tag
 
-QUESTIONS = [
-  {
-    'title': 'title '  + str(i+1),
-    'id': i,
-    'text': 'text' + str(i+1),
-    'tags': ["tag_" + str(i % 4), "blabla"]
-  } for i in range(30)
-]
 
-ANSWERS = [
-  {
-    'title': 'answer '  + str(i+1),
-    'id': i,
-    'text': 'some advice about your problem #' + str(i+1)
-  } for i in range(5)
-]
-
-TAGS = ["tag_0", "tag_1", "tag_2", "tag_3", "blabla"]
+TAGS = Tag.objects.get_popular()
 
 def index(request):
-    page_num = int(request.GET.get('page', 1))
-    paginator = Paginator(QUESTIONS, 5)
-    page = paginator.page(page_num)
+    questions = Question.objects.new_questions()
+    page = paginate(questions, request, per_page=5)
     return render(request, 'index.html',
                   context={'questions': page.object_list, 'page_obj': page, 'tags': TAGS})
 
 
 def hot(request):
-    page_num = int(request.GET.get('page', 1))
-    hot_questions = copy.deepcopy(QUESTIONS)
-    hot_questions.reverse()
-    paginator = Paginator(hot_questions, 5)
-    page = paginator.page(page_num)
+    hot_questions = Question.objects.hot_questions()
+    page = paginate(hot_questions, request, per_page=5)
     return render(request, 'hot.html',
                 context={'questions': page.object_list, 'page_obj': page, 'tags': TAGS})
 
 
 def question(request, question_id):
-    one_question = QUESTIONS[question_id]
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(ANSWERS, 3)
-    page = paginator.page(page_num)
+    question = get_object_or_404(Question, id=question_id)
+    answers = Answer.objects.get_answer(question)
+    page = paginate(answers, request, per_page=3)
     return render(request, 'one_question.html',
-                {'item': one_question, 'tags': TAGS, 'answers': page.object_list, 'page_obj': page})
+                  context={'question': question, 'page_obj': page,
+                           "answers": answers, 'tags': TAGS})
 
 
 def login(request):
@@ -67,11 +48,11 @@ def ask(request):
 
 
 def tag(request, tag_name):
-    tag_questions = [question for question in QUESTIONS if tag_name in question['tags']]
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(tag_questions, 5)
-    page = paginator.page(page_num)
-    return render(request, 'tag.html', {'questions': page.object_list, 'page_obj': page, 'tag_name': tag_name, 'tags': TAGS})
+    tag = get_object_or_404(Tag, name=tag_name)
+    tag_questions = Question.objects.get_by_tag(tag)
+    page = paginate(tag_questions, request, per_page=5)
+    return render(request, 'tag.html', {'questions': page.object_list, 'page_obj': page,
+                            'tag_name': tag.name, 'tags': TAGS})
 
 def paginate(objects_list, request, per_page=10):
     paginator = Paginator(objects_list, 5)
