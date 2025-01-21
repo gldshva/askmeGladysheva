@@ -10,4 +10,6 @@ app_patterns = [
     path("settings/", views.settings, name="settings"),
     path("ask/", views.ask, name="ask"),
     path("tag/<str:tag_name>/", views.tag, name="tag"),
+    path('logout/', views.logout, name="logout"),
+    path('profile/edit/', views.settings, name = 'settings')
 ]

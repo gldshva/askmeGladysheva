@@ -18,7 +18,7 @@
                         </h5>
                       <p class="card-text"> {{ question.text }}</p>
                       <div class="d-flex gap-5">
-                        <a href="{% url 'one_question' question.id %}" class="card-link">Answer</a>
+                        <a href="{% url 'one_question' question.id %}" class="card-link">Answers:</a>
                         <div class="d-flex">
                           Tags: <span style="margin-right: 5px;"></span>
                             {% for tag in question.tags.all %}

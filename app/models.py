@@ -28,6 +28,9 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(null=True, blank=True)
 
+    def __str__(self):
+        return self.user
+
 
 class Question(models.Model):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)

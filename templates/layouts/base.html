@@ -36,13 +36,25 @@
 
             <div class="d-flex gap-3">
               <img src="" alt="Avatar" class="img_thumbnail">
+                {% if request.user.is_authenticated %}
               <div >
                 <div>
-                  <a href="{% url 'settings' %}">User</a>
+                    <a href="{% url 'settings' %}">{{ request.user.username }}</a>
                 </div>
-                <a href="{% url 'login' %}">log in</a>
-                <a href="{% url 'registration' %}">sign up</a>
+                <div>
+                    <a href="{% url 'logout' %}">log out</a>
+                </div>
               </div>
+                {% else %}
+                <div >
+                <div>
+                    <a href="{% url 'login' %}">log in</a>
+                </div>
+                <div>
+                    <a href="{% url 'registration' %}">sign up</a>
+                </div>
+                </div>
+                {% endif %}
             </div>
           </div>
         </div>

@@ -1,4 +1,5 @@
 {% extends 'layouts/base.html' %}
+{% load bootstrap5 %}
 {% load static %}
 {% block content %}
 
@@ -8,22 +9,14 @@
 
       <div class="row mt-3">
         <div class="col-7">
-          <form action="#">
-            <div class="error text">
-                <p></p>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="floatingInput" placeholder="Login">
-                <label for="floatingInput">Login</label>
-              </div>
-              <div class="form-floating mb-5">
-                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-                <label for="floatingPassword">Password</label>
-              </div>
-              <button type="button" class="btn btn-outline-success">Log in!</button>
-              <div class="mt-4">
-                <a href="#">create new account</a>
-              </div>
-            </form>
+          <form action="{% url 'login' %}" method="POST">
+              {% csrf_token %}
+              {% bootstrap_form form %}
+              <button type="submit" class="btn btn-primary">Log in!</button>
+
+          </form>
+          <div class="mt-4">
+              <a href="{% url 'registration' %}">create new account</a>
+          </div>
         </div>
 {% endblock %}

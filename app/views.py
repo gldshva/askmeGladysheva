@@ -1,9 +1,14 @@
-import copy
-
-from django.shortcuts import render, get_object_or_404
+from django.dispatch import receiver
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponse
-from app.models import Question, Answer, Tag
+from app.models import Question, Answer, Tag, Profile
+from django.contrib import auth, messages
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from app.forms import LoginForm, SignUpForm, QuestionForm, SettingsForm, AnswerForm
+from django.db.models.signals import post_save
 
 
 TAGS = Tag.objects.get_popular()
@@ -24,27 +29,109 @@ def hot(request):
 
 def question(request, question_id):
     question = get_object_or_404(Question, id=question_id)
+    user_profile = None
+    if request.user.is_authenticated:
+        user_profile = get_object_or_404(Profile, user=request.user)
+
     answers = Answer.objects.get_answer(question)
+    form = AnswerForm(request.POST or None)
     page = paginate(answers, request, per_page=3)
+
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            form.add_error('text', 'Please log in in order to submit answers.')
+        elif form.is_valid():
+            answer = form.save(commit=False)
+            answer.question = question
+            answer.user = user_profile
+            answer.save()
+            return redirect(
+                reverse('one_question', kwargs={'question_id': question.id}) + f'?page={page.paginator.num_pages}')
+
     return render(request, 'one_question.html',
                   context={'question': question, 'page_obj': page,
-                           "answers": answers, 'tags': TAGS})
-
+                           "answers": answers, 'tags': TAGS, 'form': form})
 
 def login(request):
-    return render(request, "login.html", {'tags': TAGS})
+    form = LoginForm
+    continue_url = request.GET.get('continue')
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = auth.authenticate(request, **form.cleaned_data)
+            if user:
+                auth.login(request, user)
+                if continue_url:
+                    return redirect(continue_url)
+                return redirect('index')
+    return render(request, "login.html", {'tags': TAGS, 'form': form})
+
+
+def logout(request):
+    auth.logout(request)
+    continue_url = request.POST.get('continue')
+    if continue_url:
+        return redirect(continue_url)
+    return redirect('index')
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+post_save.connect(create_user_profile, sender=User)
 
 
 def registration(request):
-    return render(request, "registration.html", {'tags': TAGS})
+    form = SignUpForm
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth.login(request, user)
+            return redirect(reverse('index'))
+
+    return render(request, "registration.html", {'tags': TAGS, 'form': form})
 
 
 def settings(request):
-    return render(request, "settings.html", {'tags': TAGS})
+    success_message = None
+    if request.method == 'POST':
+        form = SettingsForm(request.POST, request.FILES, instance=request.user, request_user=request.user)
+        if form.is_valid():
+            form.save()
+            success_message = "Your account details have been successfully updated!"
+            return render(request, 'settings.html', {
+                'form': form,
+                'user_profile': request.user.profile,
+                'success_message': success_message
+            })
+    else:
+        form = SettingsForm(instance=request.user, request_user=request.user)
+
+    return render(request, 'settings.html', {'form': form,
+                                             'user_profile': request.user.profile,
+                                             'success_message': success_message})
 
 
+@login_required
 def ask(request):
-    return render(request, "ask.html", {'tags': TAGS})
+    if not request.user.is_authenticated:
+        continue_url = request.POST.get('continue', reverse('ask'))
+        request.session['continue_url'] = continue_url
+        return redirect(reverse('login'))
+    else:
+        user = request.user
+        user_profile = get_object_or_404(Profile, user=user)
+        form = QuestionForm(request.POST or None)
+        if request.method == 'POST':
+            if form.is_valid():
+                question = form.save(get_object_or_404(Profile, user=request.user))
+                return redirect('one_question', question_id=question.id)
+            else:
+                return render(request, 'ask.html', {'form': form, 'user_profile': user_profile, 'tags': TAGS})
+        return render(request, 'ask.html', {'form': form, 'user_profile': user_profile, 'tags': TAGS})
 
 
 def tag(request, tag_name):
