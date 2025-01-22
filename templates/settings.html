@@ -9,9 +9,15 @@
 
       <div class="row mt-3">
         <div class="col-7">
-          <form action="{% url 'settings' %}" method="POST">
+          <form action="{% url 'settings' %}" method="POST" enctype="multipart/form-data">
               {% csrf_token %}
-              {% bootstrap_form form %}
+              <fieldset>
+                    {% bootstrap_form user_form %}
+            </fieldset>
+            <br>
+            <fieldset>
+                    {% bootstrap_form avatar_form %}
+            </fieldset>
             <button type="submit" class="btn btn-outline-success">Save</button>
           </form>
             {% if success_message %}

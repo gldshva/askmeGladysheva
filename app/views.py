@@ -2,12 +2,11 @@ from django.dispatch import receiver
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.http import HttpResponse
 from app.models import Question, Answer, Tag, Profile
 from django.contrib import auth, messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from app.forms import LoginForm, SignUpForm, QuestionForm, SettingsForm, AnswerForm
+from app.forms import LoginForm, SignUpForm, QuestionForm, SettingsForm, AnswerForm, AvatarForm
 from django.db.models.signals import post_save
 
 
@@ -98,21 +97,26 @@ def registration(request):
 def settings(request):
     success_message = None
     if request.method == 'POST':
-        form = SettingsForm(request.POST, request.FILES, instance=request.user, request_user=request.user)
-        if form.is_valid():
-            form.save()
+        user_form = SettingsForm(request.POST, instance=request.user, request_user=request.user)
+        avatar_form = AvatarForm(request.POST, request.FILES, instance=request.user.profile)
+
+        if user_form.is_valid() and avatar_form.is_valid():
+            user_form.save()
+            avatar_form.save()
             success_message = "Your account details have been successfully updated!"
-            return render(request, 'settings.html', {
-                'form': form,
+            return render(request, 'settings.html', {'tags': TAGS,
+                'user_form': user_form,
+                'avatar_form': avatar_form,
                 'user_profile': request.user.profile,
                 'success_message': success_message
             })
     else:
-        form = SettingsForm(instance=request.user, request_user=request.user)
-
-    return render(request, 'settings.html', {'form': form,
+        user_form = SettingsForm(instance=request.user, request_user=request.user)
+        avatar_form = AvatarForm(instance=request.user.profile)
+    return render(request, 'settings.html', {'user_form': user_form,
+                                            'avatar_form': avatar_form,
                                              'user_profile': request.user.profile,
-                                             'success_message': success_message})
+                                             'success_message': success_message, 'tags': TAGS})
 
 
 @login_required

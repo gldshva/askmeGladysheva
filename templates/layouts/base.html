@@ -35,7 +35,7 @@
             </button>
 
             <div class="d-flex gap-3">
-              <img src="" alt="Avatar" class="img_thumbnail">
+              <img src="{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% endif %}" alt="Avatar" class="img_thumbnail" width="50" height="50">
                 {% if request.user.is_authenticated %}
               <div >
                 <div>

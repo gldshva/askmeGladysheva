@@ -29,7 +29,7 @@ class Profile(models.Model):
     avatar = models.ImageField(null=True, blank=True)
 
     def __str__(self):
-        return self.user
+        return self.user.username
 
 
 class Question(models.Model):

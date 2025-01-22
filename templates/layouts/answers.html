@@ -4,7 +4,8 @@
                   <div class="row">
                       <div class="col-2">
                         <div class="border mb-3" style="height: 100px;">
-                          <img src="i.jpg" alt="Avatar" class="img-fluid">
+                          <img src="{% if answer.user.avatar %}{{ answer.user.avatar.url }}{% endif %}" alt="Avatar"
+                                 style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
 
                         <input class="form-control" type="number" value="5" placeholder="Default input" aria-label="default input example">

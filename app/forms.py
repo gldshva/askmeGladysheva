@@ -103,7 +103,6 @@ class AnswerForm(forms.ModelForm):
 class SettingsForm(forms.ModelForm):
     username = forms.CharField(max_length=32, min_length=3)
     email = forms.EmailField()
-    picture = forms.ImageField(required=False)
 
     class Meta:
         model = User
@@ -134,7 +133,12 @@ class SettingsForm(forms.ModelForm):
             user.save()
 
         profile = self.request_user.profile
-        profile.avatar = self.cleaned_data.get('picture', profile.avatar)
+        profile.avatar = self.cleaned_data.get('avatar', profile.avatar)
         profile.save()
 
         return user
+
+class AvatarForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['avatar']

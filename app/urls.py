@@ -1,5 +1,7 @@
 from django.urls import path
 from app import views
+from askme_gladysheva import settings
+from django.conf.urls.static import static
 
 app_patterns = [
     path('', views.index, name='index'),
@@ -13,3 +15,6 @@ app_patterns = [
     path('logout/', views.logout, name="logout"),
     path('profile/edit/', views.settings, name = 'settings')
 ]
+
+if settings.DEBUG:
+    app_patterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
